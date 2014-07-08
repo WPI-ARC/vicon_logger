@@ -13,7 +13,7 @@ class Logger:
         self.markers = []
         self.objects = []
 
-        if not marker_topic or object_topic:
+        if not (marker_topic or object_topic):
             print "At least one topic needed to subscribe to"
             exit(0)
         if marker_topic:
@@ -66,7 +66,7 @@ class Logger:
                     segment = o.segments[0]         #  All objects we use are 1 segment.
 
                     line_str += str(segment.name) + ","
-                    line_str += str(segment.occluded) + ","
+                    line_str += str(int(segment.occluded)) + ","
                     line_str += str(segment.transform.translation.x) + ","
                     line_str += str(segment.transform.translation.y) + ","
                     line_str += str(segment.transform.translation.z) + ","
