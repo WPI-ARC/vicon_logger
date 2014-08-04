@@ -8,6 +8,11 @@ find_package(catkin REQUIRED COMPONENTS
   lightweight_vicon_bridge
   rospy
   std_msgs
+  roscpp
+  sensor_msgs
+  image_transport
+  
+  cv_bridge
 )
 
 ## System dependencies are found with CMake's conventions
@@ -82,28 +87,30 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES vicon_logger
-#  CATKIN_DEPENDS lightweight_vicon_bridge rospy std_msgs
-#  DEPENDS system_lib
+CATKIN_DEPENDS roscpp rospy std_msgs sensor_msgs
+DEPENDS system_lib
 )
 
 ###########
 ## Build ##
 ###########
 
+find_package(OpenCV)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
+include_directories(${catkin_INCLUDE_DIRS})
 
 ## Declare a cpp library
 # add_library(vicon_logger
 #   src/${PROJECT_NAME}/vicon_logger.cpp
 # )
 
-## Declare a cpp executable
-# add_executable(vicon_logger_node src/vicon_logger_node.cpp)
+# Declare a cpp executable
+add_executable(camera_image_logger src/camera_image_logger.cpp)
+target_link_libraries(camera_image_logger ${catkin_LIBRARIES} ${OpenCV_LIBARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

@@ -1,0 +1,13 @@
+<launch>
+
+    <node name="camera_logger_node" pkg="vicon_logger" type="camera_image_logger" output="screen">
+        <param name="camera_logger_folder" type="string" value="/home/air-admin/workspace/saved_images/test" />
+        <param name="camera_logger_topic" type="string" value="/usb_cam/image_raw" />
+    </node>
+
+    <node name="vicon_logger_node" pkg="vicon_logger" type="logger.py" output="screen">
+        <param name="markers_topic" type="string" value="mocap_markers" />
+        <param name="object_topic" type="string" value="mocap_tracking" />
+    </node>
+
+</launch>
