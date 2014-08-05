@@ -5,6 +5,7 @@
 import rospy
 from std_msgs.msg import *
 from lightweight_vicon_bridge.msg import *
+import subprocess
 
 class Logger:
 
@@ -12,6 +13,7 @@ class Logger:
         rospy.on_shutdown(self.on_shutdown)
         self.markers = []
         self.objects = []
+        self.bag = subprocess.Popen('rosbag record -a', stdin=subprocess.PIPE, shell=True, cwd='./') 
 
         if not (marker_topic or object_topic):
             print "At least one topic needed to subscribe to"
@@ -33,6 +35,9 @@ class Logger:
 
 
     def on_shutdown(self):
+        print "killing bag process"
+        subprocess.Popen('kill ' + str(self.bag.pid), shell=True)
+
         if self.markers:
             print "Logging stored marker values to disk..."
             f = open("markers.csv", "w")
