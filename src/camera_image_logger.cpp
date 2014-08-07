@@ -68,7 +68,7 @@ bool CameraListener::takeSnapshot(ros::Time time)
         try
         {
             std::stringstream s;
-            s << _folder << time.sec << "_" << (1000*time.nsec) << ".png";
+            s << _folder << time.sec << "_" << time.nsec << ".png";
             // s << _folder << _id << "_" << _file++ << ".png";
             cv::imwrite(s.str().c_str(), _current_img->image);
             _is_recorded = true;
