@@ -9,11 +9,12 @@ import subprocess
 
 class Logger:
 
-    def __init__(self, marker_topic, object_topic):
+    def __init__(self, marker_topic, object_topic, folder):
         rospy.on_shutdown(self.on_shutdown)
         self.markers = []
         self.objects = []
-        self.bag = subprocess.Popen('rosbag record -a', stdin=subprocess.PIPE, shell=True, cwd='./') 
+        self.folder = folder
+        self.bag = subprocess.Popen('rosbag record -a', stdin=subprocess.PIPE, shell=True, cwd=self.folder)
 
         if not (marker_topic or object_topic):
             print "At least one topic needed to subscribe to"
@@ -40,7 +41,7 @@ class Logger:
 
         if self.markers:
             print "Logging stored marker values to disk..."
-            f = open("markers.csv", "w")
+            f = open(self.folder + "/markers.csv", "w")
             for frame in self.markers:
                 line_str = ""
                 # line_str += str(pos.tracker_name) + ','
@@ -60,7 +61,7 @@ class Logger:
 
         if self.objects:
             print "Logging stored object values to disk..."
-            f = open("objects.csv", "w")
+            f = open(self.folder + "/objects.csv", "w")
             for frame in self.objects:
                 line_str = ""
                 # line_str += str(pos.tracker_name) + ','
@@ -87,8 +88,9 @@ class Logger:
 
 if __name__ == '__main__':
     rospy.init_node('logger')
+    folder = rospy.get_param("~folder", "./")
     marker_topic = rospy.get_param("~markers_topic", "mocap_markers")
     object_topic = rospy.get_param("~objects_topic", "mocap_tracking" )
-    Logger(marker_topic, object_topic)
+    Logger(marker_topic, object_topic, folder)
 
 
