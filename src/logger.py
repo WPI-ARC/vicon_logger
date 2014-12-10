@@ -6,15 +6,24 @@ import rospy
 from std_msgs.msg import *
 from lightweight_vicon_bridge.msg import *
 import subprocess
+import time
 
 class Logger:
 
-    def __init__(self, marker_topic, object_topic, folder):
+    def __init__(self, marker_topic, object_topic, folder, specific_topics=None):
         rospy.on_shutdown(self.on_shutdown)
         self.markers = []
         self.objects = []
         self.folder = folder
-        self.bag = subprocess.Popen('rosbag record -a', stdin=subprocess.PIPE, shell=True, cwd=self.folder)
+
+        if specific_topics is None:
+            self.topics = '-a'
+        else:
+            self.topics = specific_topics
+            
+        self.bag = subprocess.Popen('rosbag record ' + self.topics, stdin=subprocess.PIPE, shell=True, cwd=self.folder)
+        
+        time.sleep(5)
 
         if not (marker_topic or object_topic):
             print "At least one topic needed to subscribe to"
@@ -23,6 +32,8 @@ class Logger:
             self.marker_sub = rospy.Subscriber(marker_topic, MocapMarkerArray, self.marker_cb)
         if object_topic:
             self.object_sub = rospy.Subscriber(object_topic, MocapState, self.object_cb)
+
+        print "GO!!!!! in 5 sec"
 
         sleep_rate = rospy.Rate(100.0)
         while not rospy.is_shutdown():
@@ -91,6 +102,8 @@ if __name__ == '__main__':
     folder = rospy.get_param("~folder", "./")
     marker_topic = rospy.get_param("~markers_topic", "mocap_markers")
     object_topic = rospy.get_param("~objects_topic", "mocap_tracking" )
-    Logger(marker_topic, object_topic, folder)
+    specific_topics = None
+    specific_topics = '/joint_states /mocap_markers /tf'
+    Logger(marker_topic, object_topic, folder, specific_topics)
 
 
