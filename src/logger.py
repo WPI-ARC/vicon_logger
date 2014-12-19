@@ -103,7 +103,7 @@ if __name__ == '__main__':
     marker_topic = rospy.get_param("~markers_topic", "mocap_markers")
     object_topic = rospy.get_param("~objects_topic", "mocap_tracking" )
     specific_topics = None
-    specific_topics = '/joint_states /mocap_markers /tf'
+    specific_topics = '/joint_states /mocap_markers /mocap_tracking /r_arm_controller/state /l_arm_controller/state /tf'
     Logger(marker_topic, object_topic, folder, specific_topics)
 
 
